@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%logger][%method:%line]: %msg%n</Pattern>
+		</layout>
+	</appender>
+	
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%logger][%method:%line]: %msg%n</Pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>[%d{HH:mm:ss}][%-5level][%logger][%method:%line]: %msg%n</pattern>
+		</encoder>
+<!-- 		<file>${catalina.home}/logs/smlgt.logback.log</file> -->
+		<file>/sitelog/WEBLOG/test001/test001.logback.log</file>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/sitelog/WEBLOG/test001/test001.logback.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 100MB -->
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+	
+	<logger name="kr.ac" level="debug"/>
+	<logger name="ngel" level="debug"/>
+	<logger name="org.springframework" level="warn"/>
+	<logger name="org.apache" level="warn"/>
+	<logger name="egovframework.rte" level="warn"/>
+
+	<root level="debug">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="ROLLING" />
+	</root>
+
+</configuration>

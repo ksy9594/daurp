@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 맵퍼 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cms">
+    <insert id="addCmsAuthList" parameterType="map">
+        INSERT INTO cms_auth_list
+        (
+           AUTH_CODE,
+           AUTH_NAME,
+           AUTH_COMMENT,
+           AUTH_LAST_MODIFY_DATE
+        ) VALUES
+        (
+          #{authCode},
+          #{authName},
+          #{authComment},
+          SYSDATE()
+        );
+    </insert>
+
+    <select id="selectCmsAuthList" resultType="map">
+        SELECT AUTH_CODE,
+                AUTH_NAME,
+                AUTH_COMMENT,
+                AUTH_LAST_MODIFY_DATE
+        FROM cms_auth_list;
+    </select>
+
+    <delete id="deleteCmsAuthList" parameterType="map">
+        delete
+        from cms_auth_list
+        where auth_code = #{authCode}
+    </delete>
+
+</mapper>

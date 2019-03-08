@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 맵퍼 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Certificate">
+	<insert id="addCandidate" parameterType="map">
+        INSERT INTO certificate_candidate_tb
+        (
+        CER_NAME,
+        CER_IMAGE,
+        CER_TEL,
+        CER_BIRTHDAY,
+        CER_ZIPCODE,
+        CER_ADDRESS1,
+        CER_ADDRESS2,
+        CER_EMAIL,
+        CER_SPEC,
+        CER_COLLEGE,
+        CER_MAJOR,
+        CER_ENTERPRISENAME,
+        CER_ENTERPRISEWORK,
+        CER_RECEIPTDATE,
+        CER_CODE
+        )
+        VALUES
+        (
+        #{NAME},
+        #{IMAGE},
+        #{TEL},
+        #{BIRTH},
+        #{ZIPCODE},
+        #{ADDRESS1},
+        #{ADDRESS2},
+        #{EMAIL},
+        #{SPEC},
+        #{COLLEGE},
+        #{MAJOR},
+        #{ENTERPRISENAME},
+        #{ENTERPRISEWORK},
+        SYSDATE(),
+        #{cer_num}
+        );
+    </insert>
+    <insert id="addCertificateDegree" parameterType="map">
+        INSERT INTO certificate_number
+        (
+          cer_number,
+          subject_code,
+          certificate_degreeNm,
+          cer_location,
+          certificate_date,
+          receipt_date
+        )
+        VALUES
+        (
+          substring(#{cer_number},1,10),
+          #{subject_code},
+          #{certificate_degreeNm},
+          #{cer_location},
+          #{certificate_date},
+          #{receipt_date}
+        )
+    </insert>
+    <select id="certificateUserInfo" resultType="map">
+        SELECT CER_NAME,
+                CER_TEL,
+                CER_ENTERPRISENAME,
+                CER_SCORE
+          FROM certificate_candidate_tb
+    </select>
+    <select id="receiptCandidate" parameterType="map" resultType="map">
+      SELECT cct.CER_NAME NAME,
+          cct.CER_TEL TEL,
+          cct.CER_BIRTHDAY BIRTH,
+          cct.CER_RECEIPTDATE RECDATE,
+          cn.subject_name SUBNAME,
+          cn.certificate_degreeNm CER_DRGNM
+      FROM
+          certificate_candidate_tb cct,
+          certificate_number cn
+      WHERE 1=1
+      AND cct.CER_CODE = cn.cer_number
+      AND cct.CER_NAME = #{NAME}
+      AND cct.CER_TEL = #{TEL}
+      AND cct.CER_CODE = #{cer_num}
+   </select>
+   <select id="memberCheck" parameterType="String" resultType="integer">
+          SELECT count(*)
+          FROM certificate_candidate_tb
+          WHERE CER_TEL = #{TEL}
+    </select>
+    <select id="certificateNumInfo" resultType="map">
+        SELECT
+          cer_number,
+          subject_name,
+          certificate_degreeNm,
+          cer_location,
+          certificate_date,
+          receipt_date
+        FROM certificate_number
+    </select>
+    <select id="certificateNumInfo_StudentInfo" resultType="map">
+        SELECT
+          cer_number,
+          subject_name,
+          certificate_degreeNm,
+          cer_location,
+          certificate_date,
+          receipt_date
+        FROM certificate_number
+    </select>
+
+    <update id="isDespoitUpdate" parameterType="map">
+        UPDATE certificate_candidate_tb
+           SET CER_ENTERPRISENAME = #{DESPOIT}
+           WHERE CER_NAME = #{NAME}
+    </update>
+</mapper>

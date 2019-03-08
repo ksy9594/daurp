@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 맵퍼 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Lecture">
+	<insert id="addStudent" parameterType="map">
+        INSERT INTO lecture_student_tb
+        (
+          LEC_NAME,
+          LEC_TEL,
+          LEC_BIRTHDAY,
+          LEC_ZIPCODE,
+          LEC_ADDRESS1,
+          LEC_ADDRESS2,
+          LEC_EMAIL,
+          LEC_SPEC,
+          LEC_COLLEGE,
+          LEC_MAJOR,
+          LEC_ENTERPRISENAME,
+          LEC_ENTERPRISEWORK,
+          LEC_RECEIPTDATE,
+          lecture_code
+        )
+        VALUES
+        (
+          #{NAME},
+          #{TEL},
+          #{BIRTH},
+          #{ZIPCODE},
+          #{ADDRESS1},
+          #{ADDRESS2},
+          #{EMAIL},
+          #{SPEC},
+          #{COLLEGE},
+          #{MAJOR},
+          #{ENTERPRISENAME},
+          #{ENTERPRISEWORK},
+          SYSDATE(),
+          #{lectureName}
+        );
+    </insert>
+
+  <select id="receiptStudent" parameterType="map" resultType="map">
+    SELECT lst.LEC_NAME LEC_NAME ,
+            lst.LEC_TEL LEC_TEL,
+            lst.LEC_BIRTHDAY LEC_BIRTHDAY,
+            date_format(lst.LEC_RECEIPTDATE,'%Y년 %m월 %d일') LEC_RECEIPTDATE,
+            len.lecture_name lecture_name
+      FROM lecture_student_tb lst,
+            lecture_name len
+     WHERE lst.lecture_code = len.lecture_code
+       AND  lst.LEC_NAME = #{NAME}
+       AND  lst.LEC_TEL = #{TEL}
+       AND  lst.lecture_code = #{attendLecName}
+  </select>
+  <select id="studentInfo" resultType="map">
+      SELECT LEC_SEQ,
+              LEC_NAME,
+              LEC_TEL,
+              LEC_BIRTHDAY,
+              lecture_code
+        FROM lecture_student_tb
+        <if test="LEC_SEQ != null and !LEC_SEQ.equals('')">
+        WHERE
+            LEC_SEQ = #{LEC_SEQ}
+        </if>
+  </select>
+
+  <select id="memberCheck" parameterType="String" resultType="integer">
+    SELECT count(*)
+      FROM lecture_student_tb
+     WHERE LEC_TEL = #{TEL}
+  </select>
+
+  <select id="isEntranceChk" resultType="map">
+      SELECT seq,
+              LEC_SEQ,
+              atnd_date,
+              entrance_time,
+              getout_time
+        FROM lecture_attend
+        WHERE LEC_SEQ = #{LEC_SEQ}
+          AND  atnd_date = date(sysdate())
+  </select>
+
+  <select id="attendInfo" resultType="map" parameterType="map">
+        SELECT lec.LEC_NAME       NAME
+               ,lec.LEC_TEL        TEL
+               ,lec.LEC_BIRTHDAY   BIRTH
+               ,DATE(atnd.atnd_date)     atndDATE
+               ,lec_n.lecture_name
+          FROM
+                lecture_student_tb lec
+          LEFT OUTER JOIN lecture_attend atnd
+              ON lec.LEC_TEL = atnd.tel_number
+              AND lec.lecture_code = atnd.lecture_code
+              AND DATE(atnd.atnd_date) = DATE(#{attndDate})
+          LEFT OUTER JOIN lecture_name lec_n
+              ON atnd.lecture_code = lec_n.lecture_code
+              <if test="attendLecName != null and !attendLecName.equals('')">
+              WHERE lec.lecture_code = #{attendLecName}
+              </if>
+  </select>
+
+  <select id="studentSelect" resultType="map" parameterType="map">
+        SELECT LEC_SEQ,
+                LEC_NAME,
+                REPLACE(LEC_TEL, MID(LEC_TEL,4,4), '****') as LEC_TEL,
+                LEC_BIRTHDAY
+          FROM lecture_student_tb
+          <if test="consonant != null and !consonant.equals('')">
+          WHERE 1=1
+             AND CASE
+                WHEN #{consonant} = 'ㄱ' THEN
+                  (LEC_NAME RLIKE '^(ㄱ|ㄲ)' OR (LEC_NAME >= '가' AND '나' > LEC_NAME))
+                WHEN #{consonant} = 'ㄴ' THEN
+                  (LEC_NAME RLIKE '^ㄴ' OR (LEC_NAME >= '나' AND '다' > LEC_NAME ))
+                WHEN #{consonant} = 'ㄷ' THEN
+                  (LEC_NAME RLIKE '^(ㄷ|ㄸ)' OR (LEC_NAME >= '다' AND '라' > LEC_NAME ))
+                WHEN #{consonant} = 'ㄹ' THEN
+                  (LEC_NAME RLIKE '^ㄹ' OR (LEC_NAME >= '라' AND '마' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅁ' THEN
+                  (LEC_NAME RLIKE '^ㅁ' OR (LEC_NAME >= '마' AND '바' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅂ' THEN
+                  (LEC_NAME RLIKE '^(ㅂ|ㅃ)' OR (LEC_NAME >= '바' AND '사' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅅ' THEN
+                  (LEC_NAME RLIKE '^(ㅅ|ㅆ)' OR (LEC_NAME >= '사' AND '아' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅇ' THEN
+                  (LEC_NAME RLIKE '^ㅇ' OR (LEC_NAME >= '아' AND '자' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅈ' THEN
+                  (LEC_NAME RLIKE '^(ㅈ|ㅉ)' OR (LEC_NAME >= '자' AND '차' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅊ' THEN
+                  (LEC_NAME RLIKE '^ㅊ' OR (LEC_NAME >= '차' AND '카' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅋ' THEN
+                  (LEC_NAME RLIKE '^ㅋ' OR (LEC_NAME >= '카' AND '타' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅌ' THEN
+                  (LEC_NAME RLIKE '^ㅌ' OR (LEC_NAME >= '타' AND '파' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅍ' THEN
+                  (LEC_NAME RLIKE '^ㅍ' OR (LEC_NAME >= '파' AND '하' > LEC_NAME ))
+                WHEN #{consonant} = 'ㅎ' THEN
+                  (LEC_NAME RLIKE '^ㅎ' OR (LEC_NAME >= '하'))
+              END
+          </if>
+  </select>
+  <select id="lectureSelect" resultType="map">
+      SELECT lecture_code,
+              lecture_name
+        FROM  lecture_name
+  </select>
+    <select id="lectureName_sms_search" resultType="map">
+      SELECT lecture_code,
+              lecture_name
+        FROM  lecture_name
+        WHERE lecture_code = #{lectureName}
+  </select>
+
+  <select id="subjectSelect" resultType="map">
+      SELECT lecturec_code
+        FROM  lecture_subject
+  </select>
+
+  <insert id="attendInsert" parameterType="map">
+    INSERT INTO lecture_attend
+    (
+      LEC_SEQ,
+      atnd_date,
+      entrance_time,
+      lecture_code
+     )
+    VALUES
+    (
+      #{LEC_SEQ},
+      DATE(sysdate()),
+      curtime(),
+      #{lecture_code}
+    )
+  </insert>
+
+    <insert id="lectureInsert" parameterType="map">
+    INSERT INTO lecture_name
+    (
+      lecture_code,
+      lecture_name,
+      lecture_location,
+      app_period
+     )
+    VALUES
+    (
+      substring(CONCAT('A',#{lecture_code}),1,10),
+      #{lectureName},
+      #{lectureLocation},
+      #{app_period}
+    )
+  </insert>
+
+   <insert id="SubjectInsert" parameterType="map">
+       INSERT INTO lecture_subject
+       (
+         lecture_code,
+         subject_code,
+         subject_name,
+         date,
+         start_time,
+         end_time
+       )
+       VALUES
+       (
+         #{lectureName},
+         substring(CONCAT('B',#{subjectCode}),1,10),
+         #{subjectName},
+         #{subjectDate},
+         #{startTime},
+         #{endTime}
+       )
+   </insert>
+
+
+  <update id="attendGetOut" parameterType="map">
+      UPDATE lecture_attend
+          SET  getout_time = curtime()
+        WHERE  seq = #{SEQ}
+  </update>
+
+</mapper>
