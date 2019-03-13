@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -173,6 +170,7 @@ public class CmsController {
         return "tiles.cms/lecture_manager";
     }
 
+    /*cmsAuthList 권한 리스트 관리*/
     @RequestMapping(value="/cms/cmsAuthList")
     public String cmsAuthList(){
 
@@ -208,8 +206,44 @@ public class CmsController {
          return cmsService.cmsAuthListDelete(authCode);
     }
 
+    @ResponseBody
+    @RequestMapping(value="/cms/cmsUrlList/delete")
+    public int cmsUrlListDelete(@RequestParam List param){
+        logger.debug("param       :       " + param);
+
+        Map<String, Object> urlSeq = new HashMap<>();
+        urlSeq.put("seq", param.get(0));
+
+        return cmsService.cmsUrlListDelete(urlSeq);
+    }
+    /*cmsAuthList 권한 리스트 관리*/
+
     @RequestMapping(value = "/cms/cmsUrlList")
     public String cmsUrlList(){
         return "tiles.cms/cmsUrlList";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/cms/cmsUrlList/add")
+    public String cmsUrlListAdd(@RequestParam Map<String, Object> param){
+        logger.debug("param       :     "+param);
+
+        cmsService.cmsUrlListAdd(param);
+
+        return "tiles.cms/cmsUrlList";
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/cms/cmsUrlList/select")
+    public List<Map<String, Object>> cmsUrlListSelect(@RequestParam Map<String, Object> param){
+        logger.debug("AuthCode     " + param);
+
+        return cmsService.cmsUrlListSelect(param);
+    }
+
+    /*cmsUserAuth 관리자 페이지 유저 관리*/
+    @RequestMapping(value="/cms/cmsUserAuth")
+    public String cmsUserAuth(){
+        return "tiles.cms/cmsUserAuth";
     }
 }

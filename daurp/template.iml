@@ -2,7 +2,11 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/config/context-security.xml</file>
+        </fileset>
+      </configuration>
     </facet>
     <facet type="web" name="Web">
       <configuration>
@@ -29,7 +33,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: ngel.framework:ngel-core:3.6.0.1" level="project" />
     <orderEntry type="library" name="Maven: egovframework.rte:egovframework.rte.fdl.cmmn:3.6.0" level="project" />

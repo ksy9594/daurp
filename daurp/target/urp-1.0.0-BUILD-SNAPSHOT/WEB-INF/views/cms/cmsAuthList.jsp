@@ -8,7 +8,6 @@
             <button id="btnDelRow" type="button" class="btn btn-default btn-ssm" onclick="delRow()">행삭제</button>
             <button type="button" class="btn btn-default btn-ssm" onclick="saveRow()">저장</button>
             <button type="button" id= "SelDelRow" name = "SelDelRow" class="btn btn-default btn-ssm">삭제</button>
-
         </div>
     </div>
     <div>
@@ -126,13 +125,13 @@
                     row += '<td>'+(i+1)+'</td>\n';
                     row += '<td><input type="checkbox" name="colSelected"></td>\n';
                     row += '<td>\n';
-                    row += '<input type="text" id="codeNum" name ="codeNum" value='+data[i].AUTH_CODE+'>\n';
+                    row += '<input type="text" id="codeNum" name ="codeNum" value="'+data[i].AUTH_CODE+'">\n';
                     row += '</td>\n';
                     row += '<td>\n';
-                    row += '<input type="text" id="authNm" name ="authNm" value='+data[i].AUTH_NAME+ '>\n';
+                    row += '<input type="text" id="authNm" name ="authNm" value="'+data[i].AUTH_NAME+ '">\n';
                     row += '</td>\n';
                     row += '<td>\n';
-                    row += '<input type="text" id="authComment" name ="authComment" value='+data[i].AUTH_COMMENT+'>\n';
+                    row += '<input type="text" id="authComment" name ="authComment" value="'+data[i].AUTH_COMMENT+'">\n';
                     row += '</td>\n';
                     row += '<td>'+data[i].AUTH_LAST_MODIFY_DATE+'</td>\n';
                     row += '<td>\n';

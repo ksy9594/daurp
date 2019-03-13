@@ -74,6 +74,7 @@ public class CmsService extends AbstractCommonService
         mapper.insert("Certificate.addCertificateDegree",param);
     }
 
+    /*cmsAuthList 권한 리스트 관리*/
     public void cmsAuthListAdd(Map<String, Object> param){
         mapper.insert("cms.addCmsAuthList", param);
     }
@@ -84,4 +85,21 @@ public class CmsService extends AbstractCommonService
     public int cmsAuthListDelete(Map<String, Object> param){
         return mapper.delete("cms.deleteCmsAuthList", param);
     }
+
+    /*cmsUrlList 권한 리스트 관리*/
+    public void cmsUrlListAdd(Map<String, Object> param){
+        mapper.insert("cms.addCmsUrlList", param);
+    }
+    public List<Map<String, Object>> cmsUrlListSelect(Map<String, Object> param){
+        return mapper.select("cms.selectCmsUrlList", param);
+    }
+    public int cmsUrlListDelete(Map<String, Object> param){
+        logger.debug("param      "   + param);
+
+        return mapper.delete("cms.deleteCmsUrlList", param);
+    }
+
+    /*cmsUserAuth 관리자 페이지 유저 관리*/
+
+
 }

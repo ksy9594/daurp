@@ -3,6 +3,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cms">
+
+    <!--cmsAuthList 권한리스트 관리-->
     <insert id="addCmsAuthList" parameterType="map">
         INSERT INTO cms_auth_list
         (
@@ -33,4 +35,43 @@
         where auth_code = #{authCode}
     </delete>
 
+    <!--권한 페이지 관리 -->
+    <insert id="addCmsUrlList" parameterType="map">
+        INSERT INTO cms_url_list
+        (
+          AUTH_CODE,
+          URL_PATH,
+          URL_NAME,
+          URL_COMMENT,
+          URL_MODIFY_DATE
+        ) VALUES
+        (
+          #{authCode},
+          #{urlPath},
+          #{urlName},
+          #{urlComment},
+          SYSDATE()
+        );
+    </insert>
+
+    <select id="selectCmsUrlList" parameterType="map" resultType="map">
+        SELECT cul.seq SEQ,
+                cal.AUTH_CODE AUTH_CODE,
+                cul.URL_NAME URL_NAME,
+                cul.URL_PATH URL_PATH,
+                cul.URL_COMMENT URL_COMMENT,
+                cul.URL_MODIFY_DATE URL_MODIFY_DATE
+        FROM cms_auth_list cal,
+              cms_url_list cul
+        WHERE
+             cal.AUTH_CODE = cul.AUTH_CODE
+        AND cal.AUTH_CODE = #{authCode};
+    </select>
+    
+    <delete id="deleteCmsUrlList" parameterType="map">
+        delete
+        from cms_url_list
+        where seq = #{seq}
+    </delete>
+    
 </mapper>
