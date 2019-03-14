@@ -100,6 +100,10 @@ public class CmsService extends AbstractCommonService
     }
 
     /*cmsUserAuth 관리자 페이지 유저 관리*/
-
-
+    public void cmsUserAuthAdd(Map<String, Object> param){
+      mapper.insert("cms.addCmsUserAuth", param);
+    }
+    public List<Map<String, Object>> cmsUserAuthSelect(Map<String, Object> param){
+        return mapper.select("cms.selectCmsUserAuth", param);
+    }
 }

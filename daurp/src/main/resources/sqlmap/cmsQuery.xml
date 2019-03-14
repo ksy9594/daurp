@@ -73,5 +73,44 @@
         from cms_url_list
         where seq = #{seq}
     </delete>
-    
+
+    <!--cms 관리자계정 관리 -->
+    <insert id="addCmsUserAuth" parameterType="map">
+        INSERT INTO cms_user_auth
+        (
+          USER_ID,
+          USER_PW,
+          USER_NAME,
+          USER_EMAIL,
+          USER_AUTH_CODE,
+          enabled,
+          LAST_MODIFY_DATE
+        ) VALUES
+        (
+          #{userID},
+          #{userPW},
+          #{userNm},
+          #{userEmail},
+          #{authCode},
+          #{enabled},
+          SYSDATE()
+        )
+    </insert>
+
+    <select id="selectCmsUserAuth" parameterType="map" resultType="map">
+        SELECT cal.AUTH_CODE AUTH_CODE,
+                cua.seq seq,
+                cua.USER_ID USER_ID,
+                cua.USER_PW USER_PW,
+                cua.USER_NAME USER_NAME,
+                cua.USER_EMAIL USER_EMAIL,
+                cua.USER_AUTH_CODE USER_AUTH_CODE,
+                cua.enabled enabled,
+                cua.LAST_MODIFY_DATE LAST_MODIFY_DATE
+        FROM cms_auth_list cal,
+              cms_user_auth cua
+        WHERE cal.AUTH_CODE = cua.USER_AUTH_CODE
+        AND   cal.AUTH_CODE = #{authCode};
+    </select>
+
 </mapper>

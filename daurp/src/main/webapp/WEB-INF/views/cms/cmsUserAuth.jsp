@@ -5,7 +5,7 @@
     <div class="btn-group">
         <button id="btnAddRow" type="button" class="btn btn-default btn-ssm" onclick="addUserRow()" disabled> 행추가</button>
         <button id="btnDelRow" type="button" class="btn btn-default btn-ssm" onclick="delUserRow()" disabled>행삭제</button>
-        <button type="button" class="btn btn-default btn-ssm" onclick="saveUserRow()" disabled>저장</button>
+        <button type="button" id = "SelSaveRow" class="btn btn-default btn-ssm" onclick="saveUserRow()" disabled>저장</button>
         <button type="button" id= "SelDelRow" name = "SelDelRow" class="btn btn-default btn-ssm" disabled>삭제</button>
     </div>
 </div>
@@ -42,7 +42,6 @@
                     <th>PW</th>
                     <th>성명</th>
                     <th>이메일</th>
-                    <th>권한</th>
                     <th>사용여부</th>
                     <th>수정일</th>
                 </thead>
@@ -108,19 +107,53 @@
                     row += '<tr>\n';
                     row += '<td>'+(i+1)+'</td>\n';
                     row += '<td><input type="checkbox" name="colUserSelected"></td>\n';
-                    row += '<td><input type="text" id="userId" name="userId"></td>\n';
-                    row += '<td><input type="password" id="userPw" name="userPw" ></td>\n';
-                    row += '<td><input type="text" id="userNm" name="userNm"></td>\n';
-                    row += '<td><input type="text" id="userEmail" name="userEmail"></td>\n';
-                    row += '<td><input type="text" id="auth" name="auth"></td>\n';
+                    row += '<td><input type="text" id="userId" name="userId" value="'+data[i].USER_ID+'"></td>\n';
+                    row += '<td><input type="password" id="userPw" name="userPw" value="'+data[i].USER_PW+'"></td>\n';
+                    row += '<td><input type="text" id="userNm" name="userNm" value="'+data[i].USER_NAME+'"></td>\n';
+                    row += '<td><input type="text" id="userEmail" name="userEmail" value="'+data[i].USER_EMAIL+'"></td>\n';
                     row += '<td>\n';
                     row += '<select id="enabled" name="enabled">\n';
-                    row += '<option value="0">미사용</option>';
-                    row += '<option value="1">사용</option>';
+                    row += '<option value="0" data[i].enbled ? selected : "">미사용</option>';
+                    row += '<option value="1" data[i].enbled ? selected : "">사용</option>';
                     row += '</select>';
+                    row += '</td>\n';
+                    row += '<td>'+data[i].LAST_MODIFY_DATE +'</td>';
+                    row += '<td><input type="hidden" id="colStatus" name="colStatus" value="select"></td>\n';
+                    row += '<td><input type="hidden" id="userSeq" name="userSeq" value="'+data[i].SEQ+'"></td>';
+                    row += '</tr>';
+
+                    $('#grdUserAuth').append(row);
+                    userAuthIndex = data.length + 1;
                 }
             }
         });
+    }
+    function saveUserRow() {
+        var addUserCol = $('#grdUserAuth tr td input[value="insert"]').length;
+
+        if(confirm("저장하시겠습니까?")){
+            for(var i=0; i < addUserCol; i++){
+                var userInfo = {
+                    "userID" : $("#grdUserAuth tr:eq("+i+") td input").eq(1).val(),
+                    "userPW" : $("#grdUserAuth tr:eq("+i+") td input").eq(2).val(),
+                    "userNm" : $("#grdUserAuth tr:eq("+i+") td input").eq(3).val(),
+                    "userEmail" : $("#grdUserAuth tr:eq("+i+") td input").eq(4).val(),
+                    "enabled" : $("#grdUserAuth tr:eq("+i+") td option").eq(1).val(),
+                    "authCode" : authCode
+                };
+                $.ajax({
+                   url : '${pageContext.request.contextPath} /cms/cmsUserAuth/add',
+                   data : userInfo,
+                   success : function(){
+                       console.log("성공");
+                       userList(authCode);
+                   },
+                    error : function (xhr,stat,err) {
+                        console.log(err);
+                    }
+                });
+            }
+        }
     }
 
     function addUserRow(){
@@ -163,20 +196,13 @@
         userEmailType.title = "이메일";
         userEmail.appendChild(userEmailType);
 
-        var auth = row.insertCell(6);
-        var authType = document.createElement("input");
-        authType.id = "auth";
-        authType.name = "auth";
-        authType.title = "권한";
-        auth.appendChild(authType);
-
-        var enabled = row.insertCell(7);
+        var enabled = row.insertCell(6);
         enabled.innerHTML += '<select id="enabled" name="enabled">'
                           + '<option value="0">미사용</option>'
                           + '<option value="1">사용</option>'
                           + '</select>';
 
-        var colStatus = row.insertCell(8);
+        var colStatus = row.insertCell(7);
         var colStatusType = document.createElement("input");
         colStatusType.type = "hidden";
         colStatusType.id = "colStatus";

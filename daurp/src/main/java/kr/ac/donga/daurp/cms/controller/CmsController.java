@@ -246,4 +246,21 @@ public class CmsController {
     public String cmsUserAuth(){
         return "tiles.cms/cmsUserAuth";
     }
+    @ResponseBody
+    @RequestMapping(value = "/cms/cmsUserAuth/add")
+    public String cmsUserAuthAdd(@RequestParam Map<String, Object> param){
+        logger.debug("param      :     "   + param);
+
+        cmsService.cmsUserAuthAdd(param);
+
+        return "tiles.cms/cmsUserAuth";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/cms/cmsUserAuth/select")
+    public List<Map<String, Object>> cmsUserAUthSelect(@RequestParam Map<String, Object> param){
+        logger.debug("AuthCode        "   + param);
+
+        return cmsService.cmsUserAuthSelect(param);
+    }
 }
