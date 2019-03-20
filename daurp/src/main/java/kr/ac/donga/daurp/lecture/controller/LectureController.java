@@ -29,10 +29,12 @@ public class LectureController {
 
         List<Map<String,Object>> result = lectureService.lectureSelect();
 
-        logger.debug("PARAM-----"+result);
-        logger.debug("RESULT-----"+result.get(0).get("lecture_code"));
+        if (result.size() > 0) {
+            logger.debug("PARAM-----"+result);
+            logger.debug("RESULT-----"+result.get(0).get("lecture_code"));
 
-        model.addAttribute("result",result.get(0).get("lecture_code"));
+            model.addAttribute("result",result.get(0).get("lecture_code"));
+        }
 
         return "tiles.lecture/lectureEnroll";
     }

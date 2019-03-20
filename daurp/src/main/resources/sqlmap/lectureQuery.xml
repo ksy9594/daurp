@@ -142,11 +142,30 @@
               END
           </if>
   </select>
+
+
   <select id="lectureSelect" resultType="map">
-      SELECT lecture_code,
-              lecture_name
+      SELECT lecture_code code,
+              lecture_name name,
+              lecture_location location,
+              app_period period,
+              lecture_startdate start,
+              lecture_enddate end
         FROM  lecture_name
   </select>
+    <select id="subjectSelect" resultType="map" parameterType="map">
+        SELECT  sub.lecture_code code,
+                 sub.subject_name name,
+                 sub.start_time start,
+                 sub.end_time end,
+                 sub.seq seq
+        FROM lecture_subject sub,
+              lecture_name lec
+        WHERE  sub.lecture_code = lec.lecture_code
+        AND	    lec.lecture_code = #{code};
+  </select>
+
+
     <select id="lectureName_sms_search" resultType="map">
       SELECT lecture_code,
               lecture_name
@@ -154,10 +173,6 @@
         WHERE lecture_code = #{lectureName}
   </select>
 
-  <select id="subjectSelect" resultType="map">
-      SELECT lecturec_code
-        FROM  lecture_subject
-  </select>
 
   <insert id="attendInsert" parameterType="map">
     INSERT INTO lecture_attend

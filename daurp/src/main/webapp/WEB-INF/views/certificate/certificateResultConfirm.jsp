@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
     function check() {
-        if($('#Name').val() == '' || $('#Tel').val() == ''){
+        if($('#Name').val() === '' || $('#Tel').val() === ''){
             alert("수험자 정보를 입력하세요.");
             return false;
         }

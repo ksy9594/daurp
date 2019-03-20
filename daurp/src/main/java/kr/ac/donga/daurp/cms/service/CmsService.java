@@ -3,6 +3,7 @@ package kr.ac.donga.daurp.cms.service;
 import kr.ac.donga.daurp.util.ExcelRead;
 import kr.ac.donga.daurp.util.ExcelReadOption;
 import ngel.core.service.AbstractCommonService;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,17 +54,11 @@ public class CmsService extends AbstractCommonService
 
         mapper.insert("Lecture.lectureInsert", param);
     }
-    public List<Object> lectureSelect(){
-
-        List<Object> list = mapper.select("Lecture.lectureSelect");
-
-        return list;
+    public List<Map<String, Object>> lectureSelect(){
+        return mapper.select("Lecture.lectureSelect");
     }
-    public List<Object> cntSubjectcode(Map<String, Object> param){
-
-        List<Object> list = mapper.select("Lecture.subjectSelect");
-
-        return list;
+    public List<Map<String, Object>> lectureSubjectSelect(Map<String, Object> param){
+        return mapper.select("Lecture.subjectSelect", param);
     }
 
     public void addSubject(Map<String, Object> param){
@@ -101,7 +96,13 @@ public class CmsService extends AbstractCommonService
 
     /*cmsUserAuth 관리자 페이지 유저 관리*/
     public void cmsUserAuthAdd(Map<String, Object> param){
-      mapper.insert("cms.addCmsUserAuth", param);
+
+        ShaPasswordEncoder encoder = new ShaPasswordEncoder(256);
+        String result = null;
+        result = encoder.encodePassword(param.get("userPW").toString(), result);
+        param.put("userPW", result);
+
+        mapper.insert("cms.addCmsUserAuth", param);
     }
     public List<Map<String, Object>> cmsUserAuthSelect(Map<String, Object> param){
         return mapper.select("cms.selectCmsUserAuth", param);

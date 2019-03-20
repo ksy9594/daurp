@@ -3,9 +3,59 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:egov-security="http://www.egovframe.go.kr/schema/egov-security"
              xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:security="http://www.springframework.org/schema/c"
-             xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+             xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
 		http://www.egovframe.go.kr/schema/egov-security http://www.egovframe.go.kr/schema/egov-security/egov-security-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <http pattern="/resources/**" security="none"/>
+
+    <egov-security:config
+            id="securityConfig"
+            loginUrl="/j_spring_security_check"
+            loginFailureUrl="/login/Login?error=1"
+            accessDeniedUrl="/404NotFound"
+            logoutSuccessUrl="/login/Login"
+            defaultTargetUrl="/cms/cmsUrlList"
+
+            dataSource="dataSource"
+            jdbcUsersByUsernameQuery="select user_id,
+                                          LOWER(user_pw) as PASSWORD,
+                                          enabled
+                                          from cms_user_auth
+                                          where user_id = ?"
+            jdbcAuthoritiesByUsernameQuery="select   cua.USER_ID,
+                                                     cal.AUTH_NAME
+                                                from cms_user_auth cua,
+                                                     cms_auth_list cal
+                                                where cua.USER_AUTH_CODE = cal.AUTH_CODE
+                                                and cua.USER_ID = ?"
+            hash="sha-256"
+            hashBase64="false"/>
+
+    <egov-security:initializer id="initializer"
+                               supportMethod="false"/>
+
+    <egov-security:secured-object-config id="securedObjectConfig"
+                                         roleHierarchyString="
+                                        ROLE_ADMIN > ROLE_LECTURE
+                                        ROLE_LECTURE = ROLE_CERTIFICATE
+                                        ROLE_CERTIFICATE = ROLE_EXAM
+                                        ROLE_EXAM = ROLE_SET_QUEST"
+                                         sqlRolesAndUrl="
+				        SELECT CUL.URL_PATH URL,
+                               CAL.AUTH_NAME Authority
+                        FROM   cms_auth_list CAL,
+                               cms_url_list CUL
+                        WHERE
+                        cal.AUTH_CODE = cul.AUTH_CODE
+				        "
+    />
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+        <beans:constructor-arg name="strength" value="256"></beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="webexpressionHandler"
+                class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
 
 </beans:beans>

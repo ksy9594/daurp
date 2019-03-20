@@ -1,9 +1,11 @@
 package kr.ac.donga.daurp.cms.controller;
 
+import egovframework.rte.fdl.security.userdetails.EgovUserDetails;
 import kr.ac.donga.daurp.cms.service.CmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,10 +85,8 @@ public class CmsController {
         result.put("attndDate", sysdate);
 
         List<Object> list = cmsService.cmsAttendChk(param);
-        List<Object> lecName = cmsService.lectureSelect();
 
         model.addAttribute("list", list);
-        model.addAttribute("lecName", lecName);
         model.addAttribute("params", param);
 
         return "tiles.cms/cmsAttendChk";
@@ -141,9 +141,6 @@ public class CmsController {
         param.put("subjectCode", subjectCode);
 
         cmsService.addSubject(param);
-        List<Object> lecName = cmsService.lectureSelect();
-
-        model.addAttribute("lecName", lecName);
 
         return "tiles.cms/lecture_subject";
     }
@@ -164,10 +161,22 @@ public class CmsController {
         return "tiles.cms/certificate_degreeReg";
     }
 
-    @RequestMapping(value="/cms/lecture_manager")
+    /*회차 및 교육과목 관리*/
+    @RequestMapping(value="/cms/lectureManager")
     public String cmsLectureManage(){
+        return "tiles.cms/lectureManager";
+    }
+    @ResponseBody
+    @RequestMapping(value = "/cms/lectureManager/select")
+    public List<Map<String, Object>> lectureManager(){
+        return cmsService.lectureSelect();
+    }
+    @ResponseBody
+    @RequestMapping(value="/cms/lectureManager/subjectSelect")
+    public List<Map<String,Object>> subjectSelect(@RequestParam Map<String, Object> param){
+        logger.debug("AuthCode      :    " + param);
 
-        return "tiles.cms/lecture_manager";
+        return cmsService.lectureSubjectSelect(param);
     }
 
     /*cmsAuthList 권한 리스트 관리*/
@@ -258,7 +267,7 @@ public class CmsController {
 
     @ResponseBody
     @RequestMapping(value = "/cms/cmsUserAuth/select")
-    public List<Map<String, Object>> cmsUserAUthSelect(@RequestParam Map<String, Object> param){
+    public List<Map<String, Object>> cmsUserAuthSelect(@RequestParam Map<String, Object> param){
         logger.debug("AuthCode        "   + param);
 
         return cmsService.cmsUserAuthSelect(param);
